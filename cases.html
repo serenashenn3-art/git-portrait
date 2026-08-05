@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>案例展示 · GitPortrait</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  
+  :root {
+    --bg: #ffffff;
+    --bg2: #f6f8fa;
+    --fg: #24292f;
+    --muted: #57606a;
+    --accent: #fd8c73;
+    --accent2: #8250df;
+    --border: #d0d7de;
+    --card-bg: #ffffff;
+    --radius: 12px;
+  }
+  
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--fg);
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+  
+  a { color: var(--accent2); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  
+  /* Container */
+  .container { max-width: 980px; margin: 0 auto; padding: 48px 24px; }
+  
+  /* Header */
+  .header { text-align: center; margin-bottom: 48px; padding-bottom: 32px; border-bottom: 1px solid var(--border); }
+  .header h1 { font-size: 32px; font-weight: 700; margin-bottom: 12px; }
+  .header p { color: var(--muted); font-size: 16px; max-width: 640px; margin: 0 auto; }
+  .back-link { display: inline-flex; align-items: center; gap: 6px; margin-top: 20px; font-size: 14px; color: var(--muted); }
+  
+  /* Section */
+  .section { margin-bottom: 48px; }
+  .section-title { font-size: 24px; font-weight: 700; margin-bottom: 8px; }
+  .section-desc { color: var(--muted); font-size: 15px; margin-bottom: 24px; }
+  
+  /* Case Card */
+  .case-grid { display: grid; grid-template-columns: 1fr; gap: 32px; }
+  
+  .case-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    transition: box-shadow .2s;
+  }
+  .case-card:hover { box-shadow: 0 8px 24px rgba(140,149,159,0.2); }
+  
+  .case-header {
+    padding: 20px 24px;
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  
+  .case-label { font-size: 14px; font-weight: 600; color: var(--fg); display: flex; align-items: center; gap: 8px; }
+  .case-label .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
+  
+  .case-tags { display: flex; gap: 8px; flex-wrap: wrap; }
+  .tag { padding: 4px 10px; background: var(--bg); border: 1px solid var(--border); border-radius: 999px; font-size: 12px; color: var(--muted); }
+  .tag.accent { background: rgba(130,80,223,0.1); border-color: var(--accent2); color: var(--accent2); }
+  
+  .case-body { padding: 24px; }
+  
+  .case-scene { margin-bottom: 24px; }
+  .case-scene:last-child { margin-bottom: 0; }
+  
+  .scene-title { font-size: 15px; font-weight: 600; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+  .scene-title .sep { color: var(--muted); font-weight: 400; }
+  
+  .scene-content {
+    background: var(--bg2);
+    border-radius: 8px;
+    padding: 20px;
+    border: 1px solid var(--border);
+  }
+  
+  /* Mini Profile Card */
+  .mini-profile { display: flex; gap: 16px; align-items: flex-start; }
+  .mini-avatar { width: 64px; height: 64px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--accent2)); display: flex; align-items: center; justify-content: center; color: white; font-size: 28px; font-weight: 700; flex-shrink: 0; }
+  .mini-info { flex: 1; }
+  .mini-name { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
+  .mini-bio { color: var(--muted); font-size: 14px; margin-bottom: 8px; }
+  .mini-stats { display: flex; gap: 16px; font-size: 13px; color: var(--muted); }
+  .mini-stats span { display: flex; align-items: center; gap: 4px; }
+  
+  /* Radar Mini */
+  .mini-radar { margin-top: 16px; display: flex; gap: 12px; flex-wrap: wrap; }
+  .radar-item { display: flex; align-items: center; gap: 8px; }
+  .radar-bar { width: 80px; height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
+  .radar-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 3px; }
+  .radar-label { font-size: 12px; color: var(--muted); min-width: 60px; }
+  .radar-value { font-size: 12px; font-weight: 600; color: var(--fg); }
+  
+  /* Nicknames */
+  .mini-nicks { margin-top: 16px; display: flex; gap: 8px; flex-wrap: wrap; }
+  .nick-tag { padding: 6px 12px; background: rgba(253,140,115,0.15); border: 1px solid rgba(253,140,115,0.3); border-radius: 6px; font-size: 13px; font-weight: 500; color: var(--fg); }
+  
+  /* Result Summary */
+  .result-box {
+    background: linear-gradient(135deg, rgba(253,140,115,0.08), rgba(130,80,223,0.08));
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+    margin-top: 16px;
+  }
+  .result-title { font-size: 14px; font-weight: 600; margin-bottom: 8px; }
+  .result-text { font-size: 14px; color: var(--muted); line-height: 1.7; }
+  .result-text strong { color: var(--fg); }
+  
+  /* Footer */
+  .footer { text-align: center; padding: 32px 0; border-top: 1px solid var(--border); margin-top: 48px; }
+  .footer p { color: var(--muted); font-size: 14px; }
+  
+  /* Responsive */
+  @media (max-width: 640px) {
+    .container { padding: 24px 16px; }
+    .case-header { flex-direction: column; align-items: flex-start; }
+    .mini-profile { flex-direction: column; align-items: center; text-align: center; }
+    .mini-stats { justify-content: center; }
+  }
+</style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <h1>案例展示 · GitPortrait</h1>
+      <p>看看 GitPortrait 如何为不同类型的 GitHub 贡献者生成有趣的画像评测，从开源大神到新兴创作者，每个人都有独特的画像故事。</p>
+      <a href="index.html" class="back-link">← 返回主页</a>
+    </div>
+    
+    <!-- Case 1: 开源大神 -->
+    <div class="section">
+      <h2 class="section-title">场景一 · 开源大神：Linux 之父</h2>
+      <p class="section-desc">当你输入一个传奇级的贡献者，GitPortrait 会如何描绘他的画像？</p>
+      
+      <div class="case-grid">
+        <div class="case-card">
+          <div class="case-header">
+            <div class="case-label"><span class="dot"></span> 案例：Linus Torvalds (@torvalds)</div>
+            <div class="case-tags">
+              <span class="tag accent">Linux 之父</span>
+              <span class="tag accent">Git 创造者</span>
+              <span class="tag">SS 级</span>
+            </div>
+          </div>
+          <div class="case-body">
+            <div class="case-scene">
+              <div class="scene-title">画像快照<span class="sep">·</span>基本信息与评分</div>
+              <div class="scene-content">
+                <div class="mini-profile">
+                  <div class="mini-avatar">L</div>
+                  <div class="mini-info">
+                    <div class="mini-name">Linus Torvalds</div>
+                    <div class="mini-bio">Creator of Linux and Git. Working at home, not at Microsoft.</div>
+                    <div class="mini-stats">
+                      <span>👥 201k 关注者</span>
+                      <span>📦 9 仓库</span>
+                      <span>⭐ 总星: 238k+</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="mini-radar">
+                  <div class="radar-item">
+                    <span class="radar-label">工程实践</span>
+                    <div class="radar-bar"><div class="radar-fill" style="width:95%"></div></div>
+                    <span class="radar-value">95</span>
+                  </div>
+                  <div class="radar-item">
+                    <span class="radar-label">创新性</span>
+                    <div class="radar-bar"><div class="radar-fill" style="width:99%"></div></div>
+                    <span class="radar-value">99</span>
+                  </div>
+                  <div class="radar-item">
+                    <span class="radar-label">影响力</span>
+                    <div class="radar-bar"><div class="radar-fill" style="width:100%"></div></div>
+                    <span class="radar-value">100</span>
+                  </div>
+                </div>
+                <div class="mini-nicks">
+                  <span class="nick-tag">🌏 开源教父</span>
+                  <span class="nick-tag">🐧 企鹅守护者</span>
+                  <span class="nick-tag">⚙️ 分布式之神</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="case-scene">
+              <div class="scene-title">画像结论<span class="sep">·</span>投资价值分析</div>
+              <div class="scene-content">
+                <div class="result-box">
+                  <div class="result-title">📊 综合评级: SS · 传说级</div>
+                  <div class="result-text">
+                    <strong>投资值: 98/100</strong> — 真·值得 All in！<br><br>
+                    Linus 的影响力已超越技术本身，他定义了现代协作开发的范式。Git 和 Linux 双重里程碑式贡献，让他的画像成为<strong>"开源精神图腾"</strong>。对于任何关注技术生态的投资人或组织，他是<strong>必追清单 Top 1</strong>。
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Case 2: 技术网红 -->
+    <div class="section">
+      <h2 class="section-title">场景二 · 技术网红：微库之神</h2>
+      <p class="section-desc">高产出、多项目、广覆盖的贡献者，画像如何呈现他们的"量"与"质"？</p>
+      
+      <div class="case-grid">
+        <div class="case-card">
+          <div class="case-header">
+            <div class="case-label"><span class="dot"></span> 案例：Sindre Sorhus (@sindresorhus)</div>
+            <div class="case-tags">
+              <span class="tag accent">微库之神</span>
+              <span class="tag">1000+ 项目</span>
+              <span class="tag">S 级</span>
+            </div>
+          </div>
+          <div class="case-body">
+            <div class="case-scene">
+              <div class="scene-title">画像快照<span class="sep">·</span>基本信息与评分</div>
+              <div class="scene-content">
+                <div class="mini-profile">
+                  <div class="mini-avatar" style="background: linear-gradient(135deg, #8250df, #1f6feb);">S</div>
+                  <div class="mini-info">
+                    <div class="mini-name">Sindre Sorhus</div>
+                    <div class="mini-bio">Full-time open-sourcerer. Making lots of tiny modules.</div>
+                    <div class="mini-stats">
+                      <span>👥 55k 关注者</span>
+                      <span>📦 1000+ 仓库</span>
+                      <span>⭐ 总星: 600k+</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="mini-radar">
+                  <div class="radar-item">
+                    <span class="radar-label">工程实践</span>
+                    <div class="radar-bar"><div class="radar-fill" style="width:88%"></div></div>
+                    <span class="radar-value">88</span>
+                  </div>
+                  <div class="radar-item">
+                    <span class="radar-label">持续性</span>
+                    <div class="radar-bar"><div class="radar-fill" style="width:96%"></div></div>
+                    <span class="radar-value">96</span>
+                  </div>
+                  <div class="radar-item">
+                    <span class="radar-label">影响力</span>
+                    <div class="radar-bar"><div class="radar-fill" style="width:92%"></div></div>
+                    <span class="radar-value">92</span>
+                  </div>
+                </div>
+                <div class="mini-nicks">
+                  <span class="nick-tag">🧩 模块大师</span>
+                  <span class="nick-tag">📦 npm 活菩萨</span>
+                  <span class="nick-tag">🚀 全栈开源者</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="case-scene">
+              <div class="scene-title">画像结论<span class="sep">·</span>投资价值分析</div>
+              <div class="scene-content">
+                <div class="result-box">
+                  <div class="result-title">📊 综合评级: S · 史诗级</div>
+                  <div class="result-text">
+                    <strong>投资值: 89/100</strong> — 非常值得关注！<br><br>
+                    Sindre 的画像关键词是<strong>"持久"</strong>。1000+ 个项目不是噱头，是<strong>十年如一日的开源信仰</strong>。他的每个"tiny module"都在 npm 生态中生根发芽。对于任何关注<strong>长期可持续开源贡献</strong>的评估，他是教科书级样本。
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Case 3: 新兴创作者 -->
+    <div class="section">
+      <h2 class="section-title">场景三 · 新兴创作者：Vibe Coder</h2>
+      <p class="section-desc">刚刚起步但充满创意的创作者，画像如何捕捉他们的"潜力"与"风格"？</p>
+      
+      <div class="case-grid">
+        <div class="case-card">
+          <div class="case-header">
+            <div class="case-label"><span class="dot"></span> 案例：Serena Shen (@serenashenn3-art)</div>
+            <div class="case-tags">
+              <span class="tag accent">AI Skill 创作者</span>
+              <span class="tag">Vibe Coding</span>
+              <span class="tag">B+ 级</span>
+            </div>
+          </div>
+          <div class="case-body">
+            <div class="case-scene">
+              <div class="scene-title">画像快照<span class="sep">·</span>基本信息与评分</div>
+              <div class="scene-content">
+                <div class="mini-profile">
+                  <div class="mini-avatar">S</div>
+                  <div class="mini-info">
+                    <div class="mini-name">Serena Shen</div>
+                    <div class="mini-bio">🐱🐶 喜欢猫和狗 · 🏊 喜欢游泳 · 💻 Vibe Coding · 🤖 Kimi</div>
+                    <div class="mini-stats">
+                      <span>👥 8 关注者</span>
+                      <span>📦 10 仓库</span>
+                      <span>⭐ 总星: 16</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="mini-radar">
+                  <div class="radar-item">
+                    <span class="radar-label">创新性</span>
+                    <div class="radar-bar"><div class="radar-fill" style="width:82%"></div></div>
+                    <span class="radar-value">82</span>
+                  </div>
+                  <div class="radar-item">
+                    <span class="radar-label">文档</span>
+                    <div class="radar-bar"><div class="radar-fill" style="width:88%"></div></div>
+                    <span class="radar-value">88</span>
+                  </div>
+                  <div class="radar-item">
+                    <span class="radar-label">持续性</span>
+                    <div class="radar-bar"><div class="radar-fill" style="width:55%"></div></div>
+                    <span class="radar-value">55</span>
+                  </div>
+                </div>
+                <div class="mini-nicks">
+                  <span class="nick-tag">🎨 百图斩主</span>
+                  <span class="nick-tag">🌿 安静的创作者</span>
+                  <span class="nick-tag">🤖 Skill 工程师</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="case-scene">
+              <div class="scene-title">画像结论<span class="sep">·</span>投资价值分析</div>
+              <div class="scene-content">
+                <div class="result-box">
+                  <div class="result-title">📊 综合评级: B+ · 良好级</div>
+                  <div class="result-text">
+                    <strong>投资值: 72/100</strong> — 值得观察，正在快速成长期<br><br>
+                    Serena 的画像亮点是<strong>"创新性"和"文档"</strong>。她的 AI Skill 项目展现了<strong>对新兴领域的敏锐嗅觉</strong>，双语 README 体现了专业度。虽然影响力和持续性还在积累，但<strong>"百图斩"和"水彩速写"</strong>等项目已展现出独特的产品思维。适合作为<strong>潜力创作者长期跟踪</strong>。
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Footer -->
+    <div class="footer">
+      <p>Generated by <a href="index.html">GitPortrait</a> · 有趣又有用的 GitHub 贡献者画像</p>
+    </div>
+  </div>
+</body>
+</html>
