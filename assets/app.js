@@ -388,6 +388,7 @@
           </p>
           <div style="margin-top:14px">
             <button class="btn btn-ghost" id="shareBtn" style="margin-right:8px">复制外号</button>
+            <button class="btn btn-ghost" id="generateArticleBtn" style="margin-right:8px">📝 生成报告</button>
             <button class="btn btn-ghost" id="resetBtn">换个用户</button>
           </div>
         </div>
@@ -400,6 +401,10 @@
   }
 
   function bindReportEvents(report) {
+    // 当前报告和语言
+    let currentReport = report;
+    let currentLang = 'zh-CN';
+
     // 复制外号
     const shareBtn = document.getElementById('shareBtn');
     if (shareBtn) {
@@ -411,6 +416,15 @@
         setTimeout(() => shareBtn.textContent = '复制外号', 1500);
       });
     }
+
+    // 生成文章
+    const generateArticleBtn = document.getElementById('generateArticleBtn');
+    if (generateArticleBtn) {
+      generateArticleBtn.addEventListener('click', () => {
+        showArticleModal(currentReport, currentLang);
+      });
+    }
+
     // 重置
     const resetBtn = document.getElementById('resetBtn');
     if (resetBtn) {
@@ -429,6 +443,55 @@
         setTimeout(() => el.querySelector('.name').textContent = orig, 1200);
       });
     });
+  }
+
+  // ---- Article Modal ----
+  function showArticleModal(report, lang) {
+    const modal = document.getElementById('articleModal');
+    const content = document.getElementById('articleContent');
+    const langBtns = document.querySelectorAll('.lang-btn');
+    const copyBtn = document.getElementById('copyArticleBtn');
+    const closeBtn = document.getElementById('modalClose');
+
+    // 生成文章
+    function generate(langCode) {
+      const article = window.GP_ARTICLE.generate(report, langCode);
+      content.textContent = article;
+      // 更新按钮状态
+      langBtns.forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === langCode);
+      });
+    }
+
+    // 初始化
+    generate(lang);
+
+    // 语言切换
+    langBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        generate(btn.dataset.lang);
+      });
+    });
+
+    // 复制
+    copyBtn.addEventListener('click', () => {
+      copyText(content.textContent);
+      copyBtn.textContent = '✓ 已复制！';
+      setTimeout(() => copyBtn.textContent = '📋 复制报告', 1500);
+    });
+
+    // 关闭
+    closeBtn.addEventListener('click', () => {
+      modal.classList.remove('show');
+    });
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        modal.classList.remove('show');
+      }
+    });
+
+    // 显示
+    modal.classList.add('show');
   }
 
   function copyText(text) {
