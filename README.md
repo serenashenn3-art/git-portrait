@@ -44,6 +44,12 @@
 3. 点击"开始画像" → 查看六维雷达 + 项目评分 + 外号 + 投资值
 4. 点击外号可复制,分享给朋友
 
+## 展示案例
+
+![Example Portrait](assets/example-portrait.jpg)
+
+上图展示了 Linux 创始人 Linus Torvalds 的画像评测结果，包含六维雷达图和详细的分析报告。
+
 ## 技术栈
 
 - 纯前端 HTML/CSS/JavaScript
@@ -82,6 +88,12 @@ A **fun and useful** social portrait tool for GitHub contributors:
 2. Enter a GitHub profile URL or username
 3. Click "Analyze" → View radar + scores + nicknames
 4. Click nicknames to copy and share
+
+## Showcase
+
+![Example Portrait](assets/example-portrait.jpg)
+
+The image above shows the portrait analysis result for Linus Torvalds, creator of Linux, featuring a 6-dimension radar chart and detailed analysis report.
 
 ## License
 
